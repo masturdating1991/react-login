@@ -1,26 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import Home from "./components/public/Home"
+import Login from "./components/public/Login"
+import Products from "./components/private/Products"
+import {Switch, Route, BrowserRouter, Redirect} from 'react-router-dom'
+import {useSelector} from 'react-redux'
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const user = useSelector(state => state.auth.user)
+    return (
+        <BrowserRouter>
+            {/*everybody can see*/}
+            <Route path='/home' render={(props) => <Home {...props} />}/>
+            {user ?
+                <Switch>
+                     {/*just login can see*/}
+                    <Route path='/products' render={(props) => <Products {...props} />}/>
+                    <Route path='/' render={(props) => <Redirect to={'/products'} {...props} />}/>
+                </Switch> :
+                <Switch>
+                     {/*not login can see*/}
+                    <Route path='/login' render={(props) => <Login {...props} />}/>
+                    <Route path='/' render={(props) => <Redirect to={'/login'} {...props} />}/>
+                </Switch>
+            }
+
+            <Products/>
+        </BrowserRouter>
+    );
 }
 
 export default App;
